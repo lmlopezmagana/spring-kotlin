@@ -39,7 +39,7 @@ class ConfigureCors() {
         override fun addCorsMappings(registry: CorsRegistry) {
             registry.addMapping("/**")
                     .allowedOrigins("*")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS")
                     .maxAge(3600)
         }
     }
@@ -58,7 +58,7 @@ class WebSecurityConfiguration(
 ) : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService)
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder)
     }
 
     override fun configure(http: HttpSecurity) {
@@ -71,7 +71,7 @@ class WebSecurityConfiguration(
                 .and()
                 .authorizeRequests()
                     .antMatchers( "/h2-console/**").permitAll()
-                    .antMatchers(POST, "/auth/login", "/user/").permitAll()
+                    .antMatchers(POST, "/auth/login", "/auth/token", "/user/").permitAll()
                     .antMatchers(GET, "/series/**").hasRole("USER")
                     .anyRequest().hasRole("ADMIN")
 
